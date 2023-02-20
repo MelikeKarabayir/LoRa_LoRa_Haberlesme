@@ -1,4 +1,4 @@
-//#include <EBYTE.h> kullanılmasa da olur
+//#include <EBYTE.h>
 //#include <SoftwareSerial.h>
 #include <LoRa_E32.h>
 #include <Wire.h>
@@ -9,7 +9,7 @@ LoRa_E32 e32ttl(&Serial1);
 
 
 #define Address 2 //0--65000 arası bir değer girebilirsiniz. Diğer Modüllerden FARKLI olmalı
-#define Channel 23 //Frekans değeri (410 + 23) (E32 için 0-31 arası) 
+#define Channel 22 //(E32 için 0-31 arası) 
 #define M0 10
 #define M1 11
 
@@ -80,26 +80,14 @@ void setup() {
 
 void loop() {
   while (e32ttl.available() > 1) {
-    ResponseStructContainer rsc = e32ttl.receiveMessage(sizeof(Signal));
-    struct Signal data = *(Signal*)rsc.data;
-    rsc.close();
-    delay(500);
-    //Wire.requestFrom(4,6);
-    /*while (Wire.available()){
-      char c = Wire.read();
-      Serial.print(c);
-    }*/
-    delay(500);
-    Serial.println("-----------------");
-    Serial.print("Gelen Basinc Verisi:");
-    Serial.print(data.pressure);
-    Serial.println(" m");
-    Serial.print("Gelen Yukseklik Verisi:");
-    Serial.print(data.altitude);
-    Serial.println(" hPa");
-    Serial.print("Gelen Sicaklik Verisi:");
-    Serial.print(data.temperature);
-    Serial.println(" C");
+  ResponseStructContainer rsc = e32ttl.receiveMessage(sizeof(Signal));
+  struct Signal data = *(Signal*)rsc.data;
+  rsc.close();
+  delay(500);
+  Serial.println("-----------------");
+  Serial.print("Gelen Basinc Verisi:");Serial.print(data.pressure);Serial.println(" m");
+  Serial.print("Gelen Yukseklik Verisi:");Serial.print(data.altitude);Serial.println(" hPa");
+  Serial.print("Gelen Sicaklik Verisi:");Serial.print(data.temperature);Serial.println(" C");
   Serial.println("-----------------");
   Serial.print("X Eksenindeki İvme = "); Serial.println(data.AccelX);
   Serial.print("Y Eksenindeki İvme = "); Serial.println(data.AccelY);

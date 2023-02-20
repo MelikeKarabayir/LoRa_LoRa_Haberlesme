@@ -1,5 +1,5 @@
 #include <Adafruit_MPL3115A2.h>
-//#include <EBYTE.h> kullanılamasa da olur
+//#include <EBYTE.h>
 //#include <SoftwareSerial.h>
 #include <LoRa_E32.h>
 #include <MPU9250.h>
@@ -10,7 +10,7 @@ static const int RXPin = 19, TXPin = 18;
 //SoftwareSerial mySerial(18, 19); //TX, RX
 LoRa_E32 e32ttl(&Serial1); //class adı, kendi belirlediğimiz değişken + rx ve tx in bağlandığı serial port numarası
 #define Address 1 //0--65000 arası bir değer girebilirsiniz. Diğer Modüllerden FARKLI olmalı
-#define Channel 23 //Frekans değeri (410 + 23) (E32 için 0-31 arası) 
+#define Channel 23 // (E32 için 0-31 arası) 
 #define AddressToBeSend 2
 #define M0 10
 #define M1 11
@@ -19,13 +19,13 @@ struct Signal {
   float pressure;
   float altitude;
   float temperature;
-  float AccelX;
+  float AccelX; //ivme
   float AccelY;
   float AccelZ;
-  float GyroX;
+  float GyroX; //açı
   float GyroY;
   float GyroZ;
-  float MagX;
+  float MagX; //manyetizma
   float MagY;
   float MagZ;
 } data;
@@ -70,10 +70,7 @@ void LoraE32Configuration() {
 }
 void setup() {
   Wire.begin(); //ı2c haberleşmelerini başlat.
-  //Wire.onRequest(requestEvent);
   Serial.begin(9600);
-  while(!Serial);
-
   if (!sensor.begin()) {
     Serial.println("Sensor bulunamadi, baglantiyi kontrol edin.");
     while(1); }
@@ -105,9 +102,6 @@ void setup() {
   IMU.setSrd(19);
 
 }
-/*void requestEvent(){
-  Wire.write("hello");
-}*/
 void loop() {
   data.pressure = sensor.getPressure();
   data.altitude = sensor.getAltitude();
@@ -128,7 +122,6 @@ void loop() {
   Serial.print("Yukseklik = "); Serial.print(data.altitude); Serial.println(" m");
   Serial.print("Sicaklik = "); Serial.print(data.temperature); Serial.println(" C");
   IMU.readSensor();
-  //portlora.listen();
 
   //ResponseStatus rs = e32ttl.sendFixedMessage(0, 3, 7, &data, sizeof(Signal));
   //Serial.println(rs.getResponseDescription());
