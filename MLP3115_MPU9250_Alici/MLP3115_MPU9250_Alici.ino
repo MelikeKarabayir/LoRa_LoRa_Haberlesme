@@ -1,16 +1,15 @@
 //#include <EBYTE.h> kullanılmasa da olur
-#include <SoftwareSerial.h>
+//#include <SoftwareSerial.h>
 #include <LoRa_E32.h>
 #include <Wire.h>
-//static const int RXPin = 19, TXPin = 18;
+static const int RXPin = 19, TXPin = 18;
 //SoftwareSerial portlora(RXPin,TXPin);
-SoftwareSerial mySerial(18, 19); //TX, RX
+//SoftwareSerial mySerial(18, 19); //TX, RX
 LoRa_E32 e32ttl(&Serial1);
 
 
 #define Address 2 //0--65000 arası bir değer girebilirsiniz. Diğer Modüllerden FARKLI olmalı
 #define Channel 23 //Frekans değeri (410 + 23) (E32 için 0-31 arası) 
-
 #define M0 10
 #define M1 11
 
@@ -85,11 +84,11 @@ void loop() {
     struct Signal data = *(Signal*)rsc.data;
     rsc.close();
     delay(500);
-    Wire.requestFrom(4,6);
-    while (Wire.available()){
+    //Wire.requestFrom(4,6);
+    /*while (Wire.available()){
       char c = Wire.read();
       Serial.print(c);
-    }
+    }*/
     delay(500);
     Serial.println("-----------------");
     Serial.print("Gelen Basinc Verisi:");

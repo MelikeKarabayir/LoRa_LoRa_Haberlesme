@@ -1,23 +1,20 @@
 #include <Adafruit_MPL3115A2.h>
 //#include <EBYTE.h> kullanılamasa da olur
-#include <SoftwareSerial.h>
+//#include <SoftwareSerial.h>
 #include <LoRa_E32.h>
-#include "MPU9250.h"
+#include <MPU9250.h>
 #include <Wire.h>
 Adafruit_MPL3115A2 sensor; //class adı, kendi belirlediğimiz veri ismi
-MPU9250 IMU(Wire,0x68);
-//static const int RXPin = 19, TXPin = 18;
-//SoftwareSerial portlora(RXPin,TXPin);
-
-SoftwareSerial mySerial(18, 19); //TX, RX
+MPU9250 IMU(Wire,0x68); 
+static const int RXPin = 19, TXPin = 18;
+//SoftwareSerial mySerial(18, 19); //TX, RX
 LoRa_E32 e32ttl(&Serial1); //class adı, kendi belirlediğimiz değişken + rx ve tx in bağlandığı serial port numarası
 #define Address 1 //0--65000 arası bir değer girebilirsiniz. Diğer Modüllerden FARKLI olmalı
 #define Channel 23 //Frekans değeri (410 + 23) (E32 için 0-31 arası) 
 #define AddressToBeSend 2
-
 #define M0 10
 #define M1 11
-int status;
+//int status;
 struct Signal {
   float pressure;
   float altitude;
@@ -72,18 +69,16 @@ void LoraE32Configuration() {
   c.close();
 }
 void setup() {
-  Wire.begin(5);
-  Wire.onRequest(requestEvent);
+  Wire.begin(); //ı2c haberleşmelerini başlat.
+  //Wire.onRequest(requestEvent);
   Serial.begin(9600);
   while(!Serial);
-  Serial.println("Adafruit_MPL3115A2");
 
   if (!sensor.begin()) {
     Serial.println("Sensor bulunamadi, baglantiyi kontrol edin.");
     while(1); }
   pinMode(M0, OUTPUT);
   pinMode(M1, OUTPUT);
-  Serial.begin(9600);
   e32ttl.begin();
   LoraE32Configuration();
   digitalWrite(M0, LOW);
@@ -93,13 +88,13 @@ void setup() {
   Serial.println("Sensor verileri gonderiliyor...");
   sensor.setSeaPressure(1013.26);
 
-  if (status < 0) {
+  /*if (status < 0) {
     Serial.println("IMU initialization unsuccessful");
     Serial.println("Check IMU wiring or try cycling power");
     Serial.print("Status: ");
     Serial.println(status);
     
-  }
+  }*/
   // setting the accelerometer full scale range to +/-8G 
   IMU.setAccelRange(MPU9250::ACCEL_RANGE_8G);
   // setting the gyroscope full scale range to +/-500 deg/s
@@ -110,9 +105,9 @@ void setup() {
   IMU.setSrd(19);
 
 }
-void requestEvent(){
+/*void requestEvent(){
   Wire.write("hello");
-}
+}*/
 void loop() {
   data.pressure = sensor.getPressure();
   data.altitude = sensor.getAltitude();
@@ -133,17 +128,12 @@ void loop() {
   Serial.print("Yukseklik = "); Serial.print(data.altitude); Serial.println(" m");
   Serial.print("Sicaklik = "); Serial.print(data.temperature); Serial.println(" C");
   IMU.readSensor();
-  
-  
- 
-  
-
   //portlora.listen();
 
   //ResponseStatus rs = e32ttl.sendFixedMessage(0, 3, 7, &data, sizeof(Signal));
   //Serial.println(rs.getResponseDescription());
 
-Serial.println("-----------------");
+  Serial.println("-----------------");
   Serial.print("X Eksenindeki İvme = "); Serial.println(data.AccelX);
   Serial.print("Y Eksenindeki İvme = "); Serial.println(data.AccelY);
   Serial.print("Z Eksenindeki İvme = "); Serial.println(data.AccelZ);
